@@ -1,4 +1,6 @@
-class GainMuscle extends Goal {
+package Goal;
+import User.*;
+public class GainMuscle extends Goal {
     @Override
     public void adjustCaloricIntake(User user) {
         user.setDailyCalorieRequirement(user.getDailyCalorieRequirement() * 1.15); // 15% Calorie Surplus

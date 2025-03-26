@@ -1,4 +1,10 @@
-class User {
+package User;
+
+import Activity.*;
+import Goal.*;
+import HealthIssue.*;
+import Enum.*;
+public class User {
     private String name;
     private int age;
     private double weight; // in kg
@@ -32,7 +38,7 @@ class User {
     }
 
     private void calculateDailyRequirements() {
-        double bmr = (gender==Gender.Male)
+        double bmr = (gender== Gender.Male)
                 ? 10 * weight + 6.25 * height - 5 * age + 5
                 : 10 * weight + 6.25 * height - 5 * age - 161;
 
@@ -65,10 +71,22 @@ class User {
         this.goal = goal;
         calculateDailyRequirements();
     }
+    public Double getProteinRequirement() {
+        return this.proteinRequirement;
+    }
+    public Double getCarbRequirement() {
+        return this.carbRequirement;
+    }
+    public Double getFatRequirement(){
+        return this.fatRequirement;
+    }
+    public Double getWaterRequirement() {
+        return this.waterRequirement;
+    }
 
     @Override
     public String toString() {
-        return "User [name=" + name + ", age=" + age + ", weight=" + weight + " kg, height=" + height + " cm, gender=" + gender +
+        return "User.User [name=" + name + ", age=" + age + ", weight=" + weight + " kg, height=" + height + " cm, gender=" + gender +
                 ", activityLevel=" + activityLevel.getClass().getSimpleName() +
                 ", healthCondition=" + healthCondition.getClass().getSimpleName() +
                 ", goal=" + goal.getClass().getSimpleName() +

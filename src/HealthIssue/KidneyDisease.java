@@ -1,4 +1,6 @@
-class KidneyDisease extends HealthCondition {
+package HealthIssue;
+import User.*;
+public class KidneyDisease extends HealthCondition {
     @Override
     public void adjustNutritionalNeeds(User user) {
         user.setMacros(50, 15, 35);
