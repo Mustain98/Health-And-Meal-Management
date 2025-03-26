@@ -6,4 +6,9 @@ public class NoHealthIssues extends HealthCondition {
         user.setMacros(50, 25, 25);
         user.setSaltAndSugar(30, 150);
     }
+
+    @Override
+    public void addDiscouragedFood(User user) {
+        System.out.println("No Discouraged food");
+    }
 }

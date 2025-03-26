@@ -26,7 +26,7 @@ public class User {
     private double waterRequirement; // in liters
     private double weeklySaltIntake; // in grams
     private double weeklySugarIntake; // in grams
-    private Set<FoodItem>discouragedFoods =new HashSet<>();
+    private Set<String>discouragedFoods;
 
     public User(String name, int age, double weight, double height, Gender gender, ActivityLevel activityLevel,List<HealthCondition>healthConditions, Goal goal) {
         this.name = name;
@@ -37,7 +37,11 @@ public class User {
         this.activityLevel = activityLevel;
         this.healthConditions = healthConditions;
         this.goal = goal;
+        this.discouragedFoods = new HashSet<>();
         calculateDailyRequirements();
+        for(HealthCondition healthCondition : healthConditions) {
+            healthCondition.addDiscouragedFood(this);
+        }
     }
 
     private void calculateWaterRequirement() {
@@ -89,8 +93,8 @@ public class User {
     public Double getFatRequirement(){
         return this.fatRequirement;
     }
-    public Double getWaterRequirement() {
-        return this.waterRequirement;
+    public Set<String>getDiscouragedFoods() {
+        return this.discouragedFoods;
     }
 
     @Override
@@ -118,6 +122,9 @@ public class User {
         // Display Health Conditions (if more than one health condition exists)
         for (HealthCondition healthCondition : healthConditions) {
             sb.append(String.format("| Health Condition       | %-25s |\n", healthCondition.getClass().getSimpleName()));
+        }
+        for (String df : discouragedFoods ) {
+            sb.append(String.format("| Discouraged Food       | %-25s |\n",df));
         }
 
         sb.append("+------------------------+----------------------------+\n");

@@ -11,11 +11,12 @@ public class MealManager {
     private final Map<String, Meal> meals;
     private final FoodDatabase foodDatabase;
     private final User user;
-
-    public MealManager(FoodDatabase foodDatabase, User user) {
+    private final Set<String>Discourageditems=new HashSet<>();
+    public MealManager(FoodDatabase foodDatabase, User user) throws SQLException {
         this.foodDatabase = foodDatabase;
         this.user = user;
         this.meals = initializeWeeklyMeals();
+        setdiscouragedFoods(user);
     }
 
     private Map<String, Meal> initializeWeeklyMeals() {
@@ -43,6 +44,7 @@ public class MealManager {
         Meal meal = meals.get(mealKey);
         Scanner scanner = new Scanner(System.in);
         showRecommededFoods(user);
+        showDiscouragedFoods();
         while (!meal.isWithinTarget()) {
             System.out.println("\n" + meal.getProgress()+"\n\n");
             System.out.print("Enter food item to add (or 'done' to finish): ");
@@ -84,13 +86,31 @@ public class MealManager {
         });
     }
 
-//    public Map<String, Meal> getMeals() {
-//        return Collections.unmodifiableMap(meals);
-//    }
     public void showRecommededFoods(User user) throws SQLException {
-        List<FoodItem>recommededFoods=foodDatabase.getFoodsByNutritionalValue(user);
+        List<FoodItem> recommendedFoods = foodDatabase.getFoodsByNutritionalValue(user);
         System.out.println("=====Recommended Foods======\n");
-        for (FoodItem foodItem : recommededFoods) {
+        System.out.println("Excluding risky foods: ");
+
+        for (FoodItem foodItem : recommendedFoods) {
+            if (!Discourageditems.contains(foodItem.getName())) {
+                System.out.println(foodItem);
+            }
+        }
+
+    }
+    public void setdiscouragedFoods(User user) throws SQLException {
+        Set<String>discouragedFooditems=new HashSet<>();
+        for(String it: user.getDiscouragedFoods()){
+            List<FoodItem>x=(foodDatabase.searchFoods(it));
+            for(FoodItem foodItem:x){
+                discouragedFooditems.add(foodItem.getName());
+            }
+        }
+        this.Discourageditems.addAll(discouragedFooditems);
+    }
+    public void showDiscouragedFoods(){
+        System.out.println("\n=== DISCOURAGED FOODS ===");
+        for(String foodItem: Discourageditems){
             System.out.println(foodItem);
         }
     }
