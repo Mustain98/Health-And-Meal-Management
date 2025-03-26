@@ -3,6 +3,8 @@ package MealPrep;
 import Database.FoodDatabase;
 import Food.FoodItem;
 import User.User;
+
+import java.sql.SQLException;
 import java.util.*;
 
 public class MealManager {
@@ -37,15 +39,14 @@ public class MealManager {
         return mealMap;
     }
 
-    public void manageMeal(String mealKey) {
+    public void manageMeal(String mealKey) throws SQLException {
         Meal meal = meals.get(mealKey);
         Scanner scanner = new Scanner(System.in);
-
+        showRecommededFoods(user);
         while (!meal.isWithinTarget()) {
-            System.out.println("\n" + meal.getProgress());
+            System.out.println("\n" + meal.getProgress()+"\n\n");
             System.out.print("Enter food item to add (or 'done' to finish): ");
             String foodName = scanner.nextLine();
-
             if (foodName.equalsIgnoreCase("done")) break;
 
             try {
@@ -62,11 +63,12 @@ public class MealManager {
 
                 System.out.print("Select food number: ");
                 int choice = scanner.nextInt();
-                scanner.nextLine(); // Consume newline
-
+                scanner.nextLine();
                 if (choice > 0 && choice <= matches.size()) {
-                    meal.addFoodItem(matches.get(choice-1));
-                    System.out.println("Added: " + matches.get(choice-1));
+                    System.out.println("(100g x number)\n"+"Number: " );
+                    int amount=scanner.nextInt();
+                    meal.addFoodItem(matches.get(choice-1),amount);
+                    System.out.println("Added: " + matches.get(choice-1)+" x "+amount);
                 }
             } catch (Exception e) {
                 System.out.println("Error: " + e.getMessage());
@@ -82,7 +84,15 @@ public class MealManager {
         });
     }
 
-    public Map<String, Meal> getMeals() {
-        return Collections.unmodifiableMap(meals);
+//    public Map<String, Meal> getMeals() {
+//        return Collections.unmodifiableMap(meals);
+//    }
+    public void showRecommededFoods(User user) throws SQLException {
+        List<FoodItem>recommededFoods=foodDatabase.getFoodsByNutritionalValue(user);
+        System.out.println("=====Recommended Foods======\n");
+        for (FoodItem foodItem : recommededFoods) {
+            System.out.println(foodItem);
+        }
     }
+
 }

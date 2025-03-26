@@ -34,38 +34,11 @@ public class FoodDatabase {
                 "SELECT name, calories, protein, fat, carbs, sugar, fiber, " +
                 "sodium, potassium, iron, zinc, vitamin_c, vitamin_a FROM nuts";
 
-        try (Connection conn = DriverManager.getConnection(DB_URL, USER, PASSWORD);
-             PreparedStatement stmt = conn.prepareStatement(query);
-             ResultSet rs = stmt.executeQuery()) {
-
-            while (rs.next()) {
-                FoodItem food = new FoodItem(
-                        rs.getString("name"),
-                        rs.getDouble("calories"),
-                        rs.getDouble("protein"),
-                        rs.getDouble("fat"),
-                        rs.getDouble("carbs"),
-                        rs.getDouble("sugar"),
-                        rs.getDouble("fiber"),
-                        rs.getDouble("sodium"),
-                        rs.getDouble("potassium"),
-                        rs.getDouble("iron"),
-                        rs.getDouble("zinc"),
-                        rs.getDouble("vitamin_c"),
-                        rs.getDouble("vitamin_a")
-                );
-
-                if (food.matchesUserNeeds(user)) {
-                    foodItems.add(food);
-                }
-            }
-        }
-        return foodItems;
+        return getResult(query, null);  // No filter needed
     }
 
-    public List<FoodItem> searchFoods(String query) throws SQLException {
-        List<FoodItem> results = new ArrayList<>();
-        String sql = "SELECT * FROM (" +
+    public List<FoodItem> searchFoods(String food) throws SQLException {
+        String query = "SELECT * FROM (" +
                 "SELECT name, calories, protein, fat, carbs FROM proteins UNION ALL " +
                 "SELECT name, calories, protein, fat, carbs FROM carbs UNION ALL " +
                 "SELECT name, calories, protein, fat, carbs FROM fats UNION ALL " +
@@ -74,12 +47,19 @@ public class FoodDatabase {
                 "SELECT name, calories, protein, fat, carbs FROM nuts" +
                 ") AS all_foods WHERE LOWER(name) LIKE LOWER(?) LIMIT 5";
 
+        return getResult(query, food);
+    }
+
+    private static List<FoodItem> getResult(String sql, String filter) throws SQLException {
+        List<FoodItem> results = new ArrayList<>();
         try (Connection conn = DriverManager.getConnection(DB_URL, USER, PASSWORD);
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
-            stmt.setString(1, "%" + query + "%");
-            ResultSet rs = stmt.executeQuery();
+            if (filter != null) {
+                stmt.setString(1, "%" + filter + "%");
+            }
 
+            ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
                 results.add(new FoodItem(
                         rs.getString("name"),

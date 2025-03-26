@@ -36,7 +36,6 @@ public class FoodItem {
         this.vitaminA = vitaminA;
     }
 
-    // Simplified constructor for search results
     public FoodItem(String name, double calories, double protein,
                     double fat, double carbs) {
         this(name, calories, protein, fat, carbs, 0, 0, 0, 0, 0, 0, 0, 0);

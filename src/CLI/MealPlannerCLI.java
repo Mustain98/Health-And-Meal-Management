@@ -7,6 +7,8 @@ import Enum.*;
 import Activity.*;
 import Goal.*;
 import HealthIssue.*;
+
+import java.sql.SQLException;
 import java.util.*;
 
 public class MealPlannerCLI {
@@ -42,7 +44,7 @@ public class MealPlannerCLI {
         }
     }
 
-    private static void manageWeeklyMeals() {
+    private static void manageWeeklyMeals() throws SQLException {
         String[] days = {"Monday", "Tuesday", "Wednesday", "Thursday",
                 "Friday", "Saturday", "Sunday"};
 

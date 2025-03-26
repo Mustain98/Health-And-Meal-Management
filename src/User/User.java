@@ -1,11 +1,14 @@
 package User;
 
 import Activity.*;
+import Food.FoodItem;
 import Goal.*;
 import HealthIssue.*;
 import Enum.*;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class User {
     private String name;
@@ -23,6 +26,7 @@ public class User {
     private double waterRequirement; // in liters
     private double weeklySaltIntake; // in grams
     private double weeklySugarIntake; // in grams
+    private Set<FoodItem>discouragedFoods =new HashSet<>();
 
     public User(String name, int age, double weight, double height, Gender gender, ActivityLevel activityLevel,List<HealthCondition>healthConditions, Goal goal) {
         this.name = name;
