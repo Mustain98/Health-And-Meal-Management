@@ -4,6 +4,9 @@ import Activity.*;
 import Goal.*;
 import HealthIssue.*;
 import Enum.*;
+
+import java.util.List;
+
 public class User {
     private String name;
     private int age;
@@ -11,7 +14,7 @@ public class User {
     private double height; // in cm
     private Gender gender;
     private ActivityLevel activityLevel;
-    private HealthCondition healthCondition;
+    private List<HealthCondition> healthConditions;
     private Goal goal;
     private double dailyCalorieRequirement;
     private double proteinRequirement; // in grams
@@ -21,14 +24,14 @@ public class User {
     private double weeklySaltIntake; // in grams
     private double weeklySugarIntake; // in grams
 
-    public User(String name, int age, double weight, double height, Gender gender, ActivityLevel activityLevel, HealthCondition healthCondition, Goal goal) {
+    public User(String name, int age, double weight, double height, Gender gender, ActivityLevel activityLevel,List<HealthCondition>healthConditions, Goal goal) {
         this.name = name;
         this.age = age;
         this.weight = weight;
         this.height = height;
         this.gender = gender;
         this.activityLevel = activityLevel;
-        this.healthCondition = healthCondition;
+        this.healthConditions = healthConditions;
         this.goal = goal;
         calculateDailyRequirements();
     }
@@ -43,7 +46,9 @@ public class User {
                 : 10 * weight + 6.25 * height - 5 * age - 161;
 
         this.dailyCalorieRequirement = activityLevel.calculateTDEE(bmr);
-        healthCondition.adjustNutritionalNeeds(this);
+        for(HealthCondition healthCondition : healthConditions) {
+            healthCondition.adjustNutritionalNeeds(this);
+        }
         goal.adjustCaloricIntake(this);
         calculateWaterRequirement();
     }
@@ -86,11 +91,35 @@ public class User {
 
     @Override
     public String toString() {
-        return "User.User [name=" + name + ", age=" + age + ", weight=" + weight + " kg, height=" + height + " cm, gender=" + gender +
-                ", activityLevel=" + activityLevel.getClass().getSimpleName() +
-                ", healthCondition=" + healthCondition.getClass().getSimpleName() +
-                ", goal=" + goal.getClass().getSimpleName() +
-                ", dailyCalorieRequirement=" + dailyCalorieRequirement + " kcal, proteinRequirement=" + proteinRequirement + " g, carbRequirement=" + carbRequirement + " g, fatRequirement=" + fatRequirement + " g, waterRequirement=" + waterRequirement + " L, " +
-                "weeklySaltIntake=" + weeklySaltIntake + " g, weeklySugarIntake=" + weeklySugarIntake + " g]";
+        StringBuilder sb = new StringBuilder();
+
+        sb.append("+------------------------+----------------------------+\n");
+        sb.append("| Attribute              | Value                      |\n");
+        sb.append("+------------------------+----------------------------+\n");
+        sb.append(String.format("| Name                   | %-25s |\n", name));
+        sb.append(String.format("| Age                    | %-25d |\n", age));
+        sb.append(String.format("| Weight                 | %-22.2f kg |\n", weight));
+        sb.append(String.format("| Height                 | %-22.2f cm |\n", height));
+        sb.append(String.format("| Gender                 | %-25s |\n", gender));
+        sb.append(String.format("| Activity Level         | %-25s |\n", activityLevel.getClass().getSimpleName()));
+        sb.append(String.format("| Goal                   | %-25s |\n", goal.getClass().getSimpleName()));
+        sb.append(String.format("| Daily Calorie Req.     | %-20.2f kcal |\n", dailyCalorieRequirement));
+        sb.append(String.format("| Protein Requirement    | %-23.2f g |\n", proteinRequirement));
+        sb.append(String.format("| Carb Requirement       | %-23.2f g |\n", carbRequirement));
+        sb.append(String.format("| Fat Requirement        | %-23.2f g |\n", fatRequirement));
+        sb.append(String.format("| Water Requirement      | %-23.2f L |\n", waterRequirement));
+        sb.append(String.format("| Weekly Salt Intake     | %-23.2f g |\n", weeklySaltIntake));
+        sb.append(String.format("| Weekly Sugar Intake    | %-23.2f g |\n", weeklySugarIntake));
+
+        // Display Health Conditions (if more than one health condition exists)
+        for (HealthCondition healthCondition : healthConditions) {
+            sb.append(String.format("| Health Condition       | %-25s |\n", healthCondition.getClass().getSimpleName()));
+        }
+
+        sb.append("+------------------------+----------------------------+\n");
+
+        return sb.toString();
     }
+
+
 }

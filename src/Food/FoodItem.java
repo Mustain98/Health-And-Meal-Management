@@ -1,4 +1,5 @@
 package Food;
+
 import User.User;
 
 public class FoodItem {
@@ -16,7 +17,10 @@ public class FoodItem {
     private double vitaminC;
     private double vitaminA;
 
-    public FoodItem(String name, double calories, double protein, double fat, double carbs, double sugar, double fiber, double sodium, double potassium, double iron, double zinc, double vitaminC, double vitaminA) {
+    public FoodItem(String name, double calories, double protein, double fat,
+                    double carbs, double sugar, double fiber, double sodium,
+                    double potassium, double iron, double zinc,
+                    double vitaminC, double vitaminA) {
         this.name = name;
         this.calories = calories;
         this.protein = protein;
@@ -32,6 +36,12 @@ public class FoodItem {
         this.vitaminA = vitaminA;
     }
 
+    // Simplified constructor for search results
+    public FoodItem(String name, double calories, double protein,
+                    double fat, double carbs) {
+        this(name, calories, protein, fat, carbs, 0, 0, 0, 0, 0, 0, 0, 0);
+    }
+
     public boolean matchesUserNeeds(User user) {
         return (this.calories <= user.getDailyCalorieRequirement() / 3) &&
                 (this.protein <= user.getProteinRequirement() / 3) &&
@@ -39,24 +49,24 @@ public class FoodItem {
                 (this.fat <= user.getFatRequirement() / 3);
     }
 
-    public double getCalories() {
-        return calories;
-    }
-
-    public double getProtein() {
-        return protein;
-    }
-
-    public double getFat() {
-        return fat;
-    }
-
-    public double getCarbs() {
-        return carbs;
-    }
+    // Getters
+    public String getName() { return name; }
+    public double getCalories() { return calories; }
+    public double getProtein() { return protein; }
+    public double getFat() { return fat; }
+    public double getCarbs() { return carbs; }
+    public double getSugar() { return sugar; }
+    public double getFiber() { return fiber; }
+    public double getSodium() { return sodium; }
+    public double getPotassium() { return potassium; }
+    public double getIron() { return iron; }
+    public double getZinc() { return zinc; }
+    public double getVitaminC() { return vitaminC; }
+    public double getVitaminA() { return vitaminA; }
 
     @Override
     public String toString() {
-        return name + " (" + calories + " kcal, " + protein + "g protein, " + fat + "g fat, " + carbs + "g carbs)";
+        return String.format("%s (%.1f kcal, P:%.1fg, F:%.1fg, C:%.1fg)",
+                name, calories, protein, fat, carbs);
     }
 }
