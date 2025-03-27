@@ -1,5 +1,5 @@
 package Database;
-import User.*;
+
 import Food.FoodItem;
 import java.sql.*;
 import java.util.ArrayList;
@@ -18,57 +18,61 @@ public class FoodDatabase {
         }
     }
 
-    public List<FoodItem> getFoodsByNutritionalValue(User user) throws SQLException {
-        List<FoodItem> foodItems = new ArrayList<>();
-        String query = "SELECT name, calories, protein, fat, carbs, sugar, fiber, " +
-                "sodium, potassium, iron, zinc, vitamin_c, vitamin_a " +
-                "FROM proteins UNION ALL " +
-                "SELECT name, calories, protein, fat, carbs, sugar, fiber, " +
-                "sodium, potassium, iron, zinc, vitamin_c, vitamin_a FROM carbs UNION ALL " +
-                "SELECT name, calories, protein, fat, carbs, sugar, fiber, " +
-                "sodium, potassium, iron, zinc, vitamin_c, vitamin_a FROM fats UNION ALL " +
-                "SELECT name, calories, protein, fat, carbs, sugar, fiber, " +
-                "sodium, potassium, iron, zinc, vitamin_c, vitamin_a FROM vegetables UNION ALL " +
-                "SELECT name, calories, protein, fat, carbs, sugar, fiber, " +
-                "sodium, potassium, iron, zinc, vitamin_c, vitamin_a FROM fruits UNION ALL " +
-                "SELECT name, calories, protein, fat, carbs, sugar, fiber, " +
-                "sodium, potassium, iron, zinc, vitamin_c, vitamin_a FROM nuts";
+    public List<FoodItem> getFoodsByCategory(String category, double calorieLimit,
+                                             double minProtein, double maxCarbs,
+                                             double maxFat) throws SQLException {
+        String query = String.format(
+                "SELECT name, calories, protein, fat, carbs FROM %s " + "WHERE calories <= ? AND protein <= ? AND carbs <= ? AND fat <= ? ",
+                category.toLowerCase());
 
-        return getResult(query, null);  // No filter needed
+        try (Connection conn = DriverManager.getConnection(DB_URL, USER, PASSWORD);
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+
+            stmt.setDouble(1, calorieLimit);
+            stmt.setDouble(2, minProtein);
+            stmt.setDouble(3, maxCarbs);
+            stmt.setDouble(4, maxFat);
+
+            return getResult(stmt);
+        }
     }
 
     public List<FoodItem> searchFoods(String food) throws SQLException {
-        String query = "SELECT * FROM (" +
-                "SELECT name, calories, protein, fat, carbs FROM proteins UNION ALL " +
-                "SELECT name, calories, protein, fat, carbs FROM carbs UNION ALL " +
-                "SELECT name, calories, protein, fat, carbs FROM fats UNION ALL " +
-                "SELECT name, calories, protein, fat, carbs FROM vegetables UNION ALL " +
-                "SELECT name, calories, protein, fat, carbs FROM fruits UNION ALL " +
-                "SELECT name, calories, protein, fat, carbs FROM nuts" +
-                ") AS all_foods WHERE LOWER(name) LIKE LOWER(?) LIMIT 5";
+        String query = """
+            SELECT * FROM (
+                SELECT name, calories, protein, fat, carbs FROM proteins
+                UNION ALL 
+                SELECT name, calories, protein, fat, carbs FROM carbs
+                UNION ALL 
+                SELECT name, calories, protein, fat, carbs FROM fats
+                UNION ALL 
+                SELECT name, calories, protein, fat, carbs FROM vegetables
+                UNION ALL 
+                SELECT name, calories, protein, fat, carbs FROM fruits
+                UNION ALL 
+                SELECT name, calories, protein, fat, carbs FROM nuts
+            ) AS all_foods WHERE LOWER(name) LIKE LOWER(?)
+            """;
 
-        return getResult(query, food);
+        try (Connection conn = DriverManager.getConnection(DB_URL, USER, PASSWORD);
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+
+            stmt.setString(1, "%" + food + "%");
+            return getResult(stmt);
+        }
     }
 
-    private static List<FoodItem> getResult(String sql, String filter) throws SQLException {
+    private List<FoodItem> getResult(PreparedStatement stmt) throws SQLException {
         List<FoodItem> results = new ArrayList<>();
-        try (Connection conn = DriverManager.getConnection(DB_URL, USER, PASSWORD);
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-
-            if (filter != null) {
-                stmt.setString(1, "%" + filter + "%");
-            }
-
-            ResultSet rs = stmt.executeQuery();
-            while (rs.next()) {
-                results.add(new FoodItem(
-                        rs.getString("name"),
-                        rs.getDouble("calories"),
-                        rs.getDouble("protein"),
-                        rs.getDouble("fat"),
-                        rs.getDouble("carbs")
-                ));
-            }
+        ResultSet rs = stmt.executeQuery();
+        while (rs.next()) {
+            results.add(new FoodItem(
+                    rs.getString("name"),
+                    rs.getDouble("calories"),
+                    rs.getDouble("protein"),
+                    rs.getDouble("fat"),
+                    rs.getDouble("carbs")
+            ));
         }
         return results;
     }

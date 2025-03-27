@@ -6,6 +6,7 @@ import Goal.*;
 import HealthIssue.*;
 import Enum.*;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -42,6 +43,10 @@ public class User {
         for(HealthCondition healthCondition : healthConditions) {
             healthCondition.addDiscouragedFood(this);
         }
+    }
+
+    public void addDiscouragedFood(List<String> foodItems) {
+        this.discouragedFoods.addAll(foodItems);
     }
 
     private void calculateWaterRequirement() {
@@ -96,7 +101,19 @@ public class User {
     public Set<String>getDiscouragedFoods() {
         return this.discouragedFoods;
     }
-
+    public void setWeight(double weight) {
+        this.weight = weight;
+        calculateDailyRequirements();
+    }
+    public void setactivity(ActivityLevel activity) {
+        this.activityLevel=activity;
+    }
+    public List<HealthCondition> getHealthConditions() {
+        return new ArrayList<>(healthConditions);
+    }
+    public void setHealthConditions(List<HealthCondition> healthConditions) {
+        this.healthConditions = healthConditions;
+    }
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -131,6 +148,5 @@ public class User {
 
         return sb.toString();
     }
-
 
 }

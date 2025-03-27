@@ -54,14 +54,7 @@ public class FoodItem {
     public double getProtein() { return protein; }
     public double getFat() { return fat; }
     public double getCarbs() { return carbs; }
-    public double getSugar() { return sugar; }
-    public double getFiber() { return fiber; }
-    public double getSodium() { return sodium; }
-    public double getPotassium() { return potassium; }
-    public double getIron() { return iron; }
-    public double getZinc() { return zinc; }
-    public double getVitaminC() { return vitaminC; }
-    public double getVitaminA() { return vitaminA; }
+
 
     @Override
     public String toString() {
