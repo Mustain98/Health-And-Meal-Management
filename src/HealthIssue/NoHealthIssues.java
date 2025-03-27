@@ -8,7 +8,5 @@ public class NoHealthIssues extends HealthCondition {
     }
 
     @Override
-    public void addDiscouragedFood(User user) {
-        System.out.println("No Discouraged food");
-    }
+    public void addDiscouragedFood(User user){}
 }

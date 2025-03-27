@@ -6,6 +6,7 @@ import Goal.*;
 import HealthIssue.*;
 import Enum.*;
 
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -38,7 +39,6 @@ public class User {
         this.activityLevel = activityLevel;
         this.healthConditions = healthConditions;
         this.goal = goal;
-        this.discouragedFoods = new HashSet<>();
         calculateDailyRequirements();
         for(HealthCondition healthCondition : healthConditions) {
             healthCondition.addDiscouragedFood(this);
@@ -101,6 +101,13 @@ public class User {
     public Set<String>getDiscouragedFoods() {
         return this.discouragedFoods;
     }
+    public void setDiscouragedFoods(Set<String> discouragedFoods) {
+        if (discouragedFoods == null) {
+            this.discouragedFoods = new HashSet<>();
+        } else {
+            this.discouragedFoods = new HashSet<>(discouragedFoods);
+        }
+    }
     public void setWeight(double weight) {
         this.weight = weight;
         calculateDailyRequirements();
@@ -113,6 +120,9 @@ public class User {
     }
     public void setHealthConditions(List<HealthCondition> healthConditions) {
         this.healthConditions = healthConditions;
+    }
+    public String getName(){
+        return this.name;
     }
     @Override
     public String toString() {
@@ -149,4 +159,27 @@ public class User {
         return sb.toString();
     }
 
+    public int getAge() {
+        return age;
+    }
+
+    public Gender getGender() {
+        return gender;
+    }
+
+    public double getWeight() {
+        return weight;
+    }
+
+    public double getHeight() {
+        return height;
+    }
+
+    public ActivityLevel getActivityLevel() {
+        return activityLevel;
+    }
+
+    public Goal getGoal() {
+        return goal;
+    }
 }
