@@ -15,7 +15,8 @@ public class MealManager {
     private final FoodRecommender foodRecommender;
     private final Set<String> discouragedItems;
     private final MealRepo mealRepo;
-
+    public static String[] days = {"Monday", "Tuesday", "Wednesday", "Thursday",
+            "Friday", "Saturday", "Sunday"};
     public MealManager(FoodDatabase foodDatabase, User user) throws SQLException {
         this.foodDatabase = foodDatabase;
         this.user = user;
@@ -58,10 +59,9 @@ public class MealManager {
         Scanner scanner = new Scanner(System.in);
 
         while (!meal.isWithinTarget()) {
+            showFoodRecommendations(meal);
             System.out.println("\nCurrent Meal Status:");
             System.out.println(meal.getProgress());
-
-            showFoodRecommendations(meal);
 
             System.out.print("\nEnter food item to add (or 'done' to finish): ");
             String foodName = scanner.nextLine();
@@ -133,9 +133,7 @@ public class MealManager {
         System.out.println("\n=== WEEKLY SUMMARY ===");
         System.out.printf("%-10s %-10s %-10s %-10s %-10s\n",
                 "Day", "Calories", "Protein", "Carbs", "Fat");
-
-        for (String day : new String[]{"Monday","Tuesday","Wednesday","Thursday",
-                "Friday","Saturday","Sunday"}) {
+        for (String day : days) {
             double calories = 0, protein = 0, carbs = 0, fat = 0;
             for (String mealType : new String[]{"Breakfast","Lunch","Dinner"}) {
                 Meal meal = meals.get(day + "_" + mealType);
@@ -163,6 +161,10 @@ public class MealManager {
 
     }
 
+    public Meal getMealFromMemory(String mealKey){
+        return meals.get(mealKey);
+    }
+
     public void showDiscouragedFoods() {
         System.out.println("\n=== DISCOURAGED FOODS ===");
         if (discouragedItems.isEmpty()) {
@@ -178,6 +180,6 @@ public class MealManager {
         return user;
     }
     public void saveMeal(String day,String meal,String mealKey) throws SQLException {
-        mealRepo.addMeal(user.getUserID(), day,meal,getMeal(mealKey));
+        mealRepo.addMeal(user.getUserID(), day,meal,getMealFromMemory(mealKey));
     }
 }

@@ -4,6 +4,8 @@ package MealPrep;
 import java.sql.SQLException;
 import java.util.Scanner;
 
+import static MealPrep.MealManager.days;
+
 public class WeeklyMealDisplay {
     private final MealManager mealManager;
     private final Scanner scanner;
@@ -50,9 +52,6 @@ public class WeeklyMealDisplay {
     }
 
     private void showDayMenu() throws SQLException {
-        String[] days = {"Monday","Tuesday","Wednesday","Thursday",
-                "Friday","Saturday","Sunday"};
-
         System.out.println("\nSelect Day:");
         for (int i = 0; i < days.length; i++) {
             System.out.printf("%d. %s\n", i+1, days[i]);
@@ -95,9 +94,6 @@ public class WeeklyMealDisplay {
     }
 
     private String getMealKeyFromMenu() {
-        String[] days = {"Monday","Tuesday","Wednesday","Thursday",
-                "Friday","Saturday","Sunday"};
-
         System.out.println("\nSelect Day to Manage:");
         for (int i = 0; i < days.length; i++) {
             System.out.printf("%d. %s\n", i+1, days[i]);

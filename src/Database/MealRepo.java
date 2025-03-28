@@ -134,7 +134,8 @@ public class MealRepo {
 
     public Meal getMeal(int mealId,Double calReq,Double ProReq,Double fatReq,Double carbReq) throws SQLException {
         // First get the meal header
-        Meal meal = new Meal(calReq,ProReq,fatReq,carbReq);
+        Meal meal = new Meal(calReq,ProReq,calReq,fatReq);
+        meal.setMealId(mealId);
         if (meal == null) {
             return null;
         }

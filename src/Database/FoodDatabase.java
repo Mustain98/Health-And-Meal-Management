@@ -23,7 +23,7 @@ public class FoodDatabase {
                                              double maxFat) throws SQLException {
         String query = String.format(
                 "SELECT name, calories, protein, fat, carbs FROM %s " +
-                        "WHERE calories <= ? AND protein >= ? AND carbs <= ? AND fat <= ?",
+                        "WHERE calories <= ? AND protein <= ? AND carbs <= ? AND fat <= ?",
                 category.toLowerCase());
 
         try (Connection conn = DriverManager.getConnection(DB_URL, USER, PASSWORD);

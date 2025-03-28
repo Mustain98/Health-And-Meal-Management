@@ -21,8 +21,8 @@ public class FoodRecommender {
     public Map<String, List<FoodItem>> getRecommendedFoodsByCategory(Meal meal) throws SQLException {
         Map<String, List<FoodItem>> recommendations = new LinkedHashMap<>();
         String[] categories = {"proteins", "carbs", "fats", "vegetables", "fruits", "nuts"};
-        int maxRecommendations = 10;
-        int offset = 5;
+        int maxRecommendations = 15;
+        int offset = 10;
         // Get remaining nutritional needs
         double remainingCalories = meal.calories.getRemaining()+80;
         double remainingProtein = meal.protein.getRemaining()+ offset;
