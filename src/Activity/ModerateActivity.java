@@ -1,4 +1,6 @@
-class ModerateActivity extends ActivityLevel {
+package Activity;
+
+public class ModerateActivity extends ActivityLevel {
     @Override
     public double calculateTDEE(double bmr) {
         return bmr * 1.55;
