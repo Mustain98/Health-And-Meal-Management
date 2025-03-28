@@ -5,12 +5,14 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Meal {
-    private final Map<FoodItem, Double> foodItems;
-    final NutritionalRequirement calories;
-    final NutritionalRequirement protein;
-    final NutritionalRequirement carbs;
-    final NutritionalRequirement fat;
+    private int mealId;
+    private  Map<FoodItem, Double> foodItems;
+    public final NutritionalRequirement calories;
+    public final NutritionalRequirement protein;
+    public final NutritionalRequirement carbs;
+    public final NutritionalRequirement fat;
     private final double tolerance;
+    double gram = 100.0;
 
     public Meal(double targetCalories, double targetProtein,
                 double targetCarbs, double targetFat) {
@@ -32,29 +34,11 @@ public class Meal {
             throw new IllegalArgumentException("Amount must be positive");
         }
         foodItems.merge(food, amount, Double::sum);
-        double multiplier = amount / 100.0; // Assuming amount is in grams
+        double multiplier = amount / gram; // Assuming amount is in grams
         calories.add(food.getCalories() * multiplier);
         protein.add(food.getProtein() * multiplier);
         carbs.add(food.getCarbs() * multiplier);
         fat.add(food.getFat() * multiplier);
-    }
-
-    public boolean removeFoodItem(FoodItem food, double amount) {
-        if (!foodItems.containsKey(food) || amount <= 0) {
-            return false;
-        }
-
-        Double currentAmount = foodItems.get(food);
-        if (amount >= currentAmount) {
-            // Remove completely
-            removeFoodNutrition(food, currentAmount);
-            foodItems.remove(food);
-        } else {
-            // Reduce amount
-            removeFoodNutrition(food, amount);
-            foodItems.put(food, currentAmount - amount);
-        }
-        return true;
     }
 
     private void removeFoodNutrition(FoodItem food, double amount) {
@@ -121,17 +105,26 @@ public class Meal {
         if (total == 0) return "No macros recorded yet";
 
         return String.format("P:%.1f%% C:%.1f%% F:%.1f%%",
-                (protein.getCurrent() / total) * 100,
-                (carbs.getCurrent() / total) * 100,
-                (fat.getCurrent() / total) * 100);
+                (protein.getCurrent() / total) * gram,
+                (carbs.getCurrent() / total) * gram,
+                (fat.getCurrent() / total) * gram);
     }
 
     public Map<FoodItem, Double> getFoodItems() {
         return new HashMap<>(foodItems);
     }
-
+    public void clearMeal(){
+        foodItems.forEach((Key,Value)->removeFoodNutrition(Key, Value));
+        foodItems.clear();
+    }
     public double getTolerance() {
         return tolerance;
+    }
+    public void setMealId(int mealId) {
+        this.mealId = mealId;
+    }
+    public int getMealId() {
+        return mealId;
     }
 
     @Override

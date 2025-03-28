@@ -2,6 +2,7 @@
 package MealPrep;
 
 import Database.FoodDatabase;
+import Database.MealRepo;
 import Food.FoodItem;
 import User.User;
 import java.sql.SQLException;
@@ -13,6 +14,7 @@ public class MealManager {
     private final User user;
     private final FoodRecommender foodRecommender;
     private final Set<String> discouragedItems;
+    private final MealRepo mealRepo;
 
     public MealManager(FoodDatabase foodDatabase, User user) throws SQLException {
         this.foodDatabase = foodDatabase;
@@ -20,6 +22,7 @@ public class MealManager {
         this.discouragedItems = initializeDiscouragedItems(user);
         this.foodRecommender = new FoodRecommender(foodDatabase, user, discouragedItems);
         this.meals = initializeWeeklyMeals();
+        this.mealRepo = new MealRepo();
     }
 
     private Set<String> initializeDiscouragedItems(User user) throws SQLException {
@@ -93,7 +96,11 @@ public class MealManager {
             }
         }
     }
-
+    public void deleteMeal(String mealKey) throws SQLException {
+        Meal meal = meals.get(mealKey);
+        mealRepo.deleteMeal(meal.getMealId());
+        meal.clearMeal();
+    }
     private List<FoodItem> filterFoods(List<FoodItem> foods, Set<String> discouraged) {
         List<FoodItem> filtered = new ArrayList<>();
         for (FoodItem food : foods) {
@@ -142,8 +149,18 @@ public class MealManager {
         }
     }
 
-    public Meal getMeal(String mealKey) {
-        return meals.get(mealKey);
+    public Meal getMeal(String mealKey) throws SQLException {
+        String[] parts = mealKey.split("_");
+        String dayOfWeek = parts[0];
+        String mealType = parts[1];
+
+        int mealId=mealRepo.getMealIdForDay(user.getUserID(), dayOfWeek, mealType);
+        Meal meal = mealRepo.getMeal(mealId,user.getDailyCalorieRequirement()/3,user.getProteinRequirement()/3,user.getFatRequirement()/3,user.getCarbRequirement()/3);
+        if (meal == null) {
+            return meals.get(mealKey);
+        }
+        return meal;
+
     }
 
     public void showDiscouragedFoods() {
@@ -159,5 +176,8 @@ public class MealManager {
 
     public User getUser() {
         return user;
+    }
+    public void saveMeal(String day,String meal,String mealKey) throws SQLException {
+        mealRepo.addMeal(user.getUserID(), day,meal,getMeal(mealKey));
     }
 }

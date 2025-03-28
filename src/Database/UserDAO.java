@@ -19,6 +19,7 @@ public class UserDAO {
         try {
             // Insert into users table
             int userId = insertUser(user.getName(), password);
+            user.setUserID(userId);
 
             // Insert user profile
             insertUserProfile(userId, user);
@@ -137,6 +138,7 @@ public class UserDAO {
         );
 
         user.setDiscouragedFoods(getDiscouragedFoods(userId));
+        user.setUserID(rs.getInt("user_id"));
         return user;
     }
 

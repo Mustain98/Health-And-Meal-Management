@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Set;
 
 public class User {
+    private int userID;
     private String name;
     private int age;
     private double weight; // in kg
@@ -181,5 +182,11 @@ public class User {
 
     public Goal getGoal() {
         return goal;
+    }
+    public void setUserID(int userID) {
+        this.userID = userID;
+    }
+    public int getUserID() {
+        return userID;
     }
 }

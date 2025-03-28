@@ -22,7 +22,8 @@ public class FoodDatabase {
                                              double minProtein, double maxCarbs,
                                              double maxFat) throws SQLException {
         String query = String.format(
-                "SELECT name, calories, protein, fat, carbs FROM %s " + "WHERE calories <= ? AND protein <= ? AND carbs <= ? AND fat <= ? ",
+                "SELECT name, calories, protein, fat, carbs FROM %s " +
+                        "WHERE calories <= ? AND protein >= ? AND carbs <= ? AND fat <= ?",
                 category.toLowerCase());
 
         try (Connection conn = DriverManager.getConnection(DB_URL, USER, PASSWORD);
@@ -62,17 +63,55 @@ public class FoodDatabase {
         }
     }
 
+    public static FoodItem getFoodByName(String name) throws SQLException {
+        String query = """
+            SELECT * FROM (
+                SELECT name, calories, protein, fat, carbs FROM proteins
+                UNION ALL 
+                SELECT name, calories, protein, fat, carbs FROM carbs
+                UNION ALL 
+                SELECT name, calories, protein, fat, carbs FROM fats
+                UNION ALL 
+                SELECT name, calories, protein, fat, carbs FROM vegetables
+                UNION ALL 
+                SELECT name, calories, protein, fat, carbs FROM fruits
+                UNION ALL 
+                SELECT name, calories, protein, fat, carbs FROM nuts
+            ) AS all_foods WHERE LOWER(name) = LOWER(?)
+            """;
+
+        try (Connection conn = DriverManager.getConnection(DB_URL, USER, PASSWORD);
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+
+            stmt.setString(1, name);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return new FoodItem(
+                            rs.getString("name"),
+                            rs.getDouble("calories"),
+                            rs.getDouble("protein"),
+                            rs.getDouble("fat"),
+                            rs.getDouble("carbs")
+                    );
+                }
+            }
+        }
+        return null;
+    }
+
     private List<FoodItem> getResult(PreparedStatement stmt) throws SQLException {
         List<FoodItem> results = new ArrayList<>();
-        ResultSet rs = stmt.executeQuery();
-        while (rs.next()) {
-            results.add(new FoodItem(
-                    rs.getString("name"),
-                    rs.getDouble("calories"),
-                    rs.getDouble("protein"),
-                    rs.getDouble("fat"),
-                    rs.getDouble("carbs")
-            ));
+        try (ResultSet rs = stmt.executeQuery()) {
+            while (rs.next()) {
+                results.add(new FoodItem(
+                        rs.getString("name"),
+                        rs.getDouble("calories"),
+                        rs.getDouble("protein"),
+                        rs.getDouble("fat"),
+                        rs.getDouble("carbs")
+                )
+                );
+            }
         }
         return results;
     }
