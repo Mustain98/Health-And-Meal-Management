@@ -20,8 +20,8 @@ public class MealPlannerCLI {
         try {
             User user = new AuthenticationService(userDAO, console).authenticate();
             if (user == null) return;
-
-            MealManager mealManager = new MealManager(foodDatabase, user);
+            MealRepo mealRepo=new MealRepo();
+            MealManager mealManager = new MealManager(foodDatabase, user,mealRepo);
             WeeklyMealDisplay weeklyDisplay = new WeeklyMealDisplay(mealManager);
             new MainMenuService(console, mealManager, weeklyDisplay).show();
 

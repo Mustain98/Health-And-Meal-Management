@@ -41,13 +41,14 @@ public class User {
         this.healthConditions = healthConditions;
         this.goal = goal;
         calculateDailyRequirements();
+        this.discouragedFoods=new HashSet<>();
         for(HealthCondition healthCondition : healthConditions) {
             healthCondition.addDiscouragedFood(this);
         }
     }
 
-    public void addDiscouragedFood(List<String> foodItems) {
-        this.discouragedFoods.addAll(foodItems);
+    public void addDiscouragedFood(String foodItem) {
+        this.discouragedFoods.add(foodItem);
     }
 
     private void calculateWaterRequirement() {
@@ -100,27 +101,33 @@ public class User {
         return this.fatRequirement;
     }
     public Set<String>getDiscouragedFoods() {
-        return this.discouragedFoods;
+        return discouragedFoods;
     }
     public void setDiscouragedFoods(Set<String> discouragedFoods) {
-        if (discouragedFoods == null) {
-            this.discouragedFoods = new HashSet<>();
-        } else {
-            this.discouragedFoods = new HashSet<>(discouragedFoods);
+        this.discouragedFoods.clear();
+        if (discouragedFoods != null) {
+            this.discouragedFoods.addAll(discouragedFoods);
         }
     }
     public void setWeight(double weight) {
         this.weight = weight;
         calculateDailyRequirements();
+        calculateWaterRequirement();
     }
     public void setactivity(ActivityLevel activity) {
         this.activityLevel=activity;
+        calculateDailyRequirements();
     }
     public List<HealthCondition> getHealthConditions() {
         return new ArrayList<>(healthConditions);
     }
-    public void setHealthConditions(List<HealthCondition> healthConditions) {
-        this.healthConditions = healthConditions;
+    public void addHealthCondition(HealthCondition healthCondition) {
+        this.healthConditions.add(healthCondition);
+        healthCondition.addDiscouragedFood(this);
+    }
+    public void removeHealthCondition(HealthCondition healthCondition) {
+        this.healthConditions.remove(healthCondition);
+        healthCondition.removeDiscouragedFood(this);
     }
     public String getName(){
         return this.name;
@@ -188,5 +195,16 @@ public class User {
     }
     public int getUserID() {
         return userID;
+    }
+
+    public void setName(String newName) {
+        this.name=newName;
+    }
+
+    public void setAge(int newAge) {
+        this.age=newAge;
+    }
+    public void removeDiscouragedFood(String food){
+        this.discouragedFoods.remove(food);
     }
 }

@@ -1,6 +1,8 @@
 // WeeklyMealDisplay.java
 package MealPrep;
 
+import CLI.ConsoleIO;
+
 import java.sql.SQLException;
 import java.util.Scanner;
 
@@ -9,10 +11,11 @@ import static MealPrep.MealManager.days;
 public class WeeklyMealDisplay {
     private final MealManager mealManager;
     private final Scanner scanner;
-
+    private final ConsoleIO consoleIO;
     public WeeklyMealDisplay(MealManager mealManager) {
         this.mealManager = mealManager;
         this.scanner = new Scanner(System.in);
+        this.consoleIO=new ConsoleIO();
     }
 
     public void showMainMenu() throws SQLException {
@@ -40,12 +43,17 @@ public class WeeklyMealDisplay {
     private void deleteMealMenu() throws SQLException {
         String mealKey = getMealKeyFromMenu();
         if (mealKey == null) return;
-        System.out.println("\nCurrent meal:");
-        showMeal(mealKey);
-        System.out.print("\nAre you sure you want to delete this meal? (y/n): ");
-        String choice = scanner.nextLine().toLowerCase();
 
-        if (choice.equals("y")) {
+        Meal meal = mealManager.getMeal(mealKey);
+        System.out.println("\nCurrent meal:");
+        System.out.println(meal);
+
+        if (meal.getMealId() == 0) {
+            System.out.println("\nThis meal hasn't been saved to the database yet.");
+            return;
+        }
+
+        if (consoleIO.getConfirmation("Are you sure you want to delete this meal?")) {
             mealManager.deleteMeal(mealKey);
             System.out.println("Meal deleted!");
         }
@@ -84,10 +92,12 @@ public class WeeklyMealDisplay {
     private void manageMealsMenu() throws SQLException {
         String mealKey = getMealKeyFromMenu();
         if (mealKey == null) return;
+        if(mealManager.getmeals().get(mealKey).mealId!=0){
+            System.out.println("Meal already saved");
+            return;
+        }
         mealManager.manageMeal(mealKey);
-        System.out.print("\nSave this meal? (y/n): ");
-        String choice = scanner.nextLine().toLowerCase();
-        if (choice.equals("y")) {
+        if (consoleIO.getConfirmation("\nSave this meal?")) {
             mealManager.saveMeal(day(mealKey),meal(mealKey),mealKey);
             System.out.println("Meal saved!");
         }

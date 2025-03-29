@@ -17,13 +17,13 @@ public class MealManager {
     private final MealRepo mealRepo;
     public static String[] days = {"Monday", "Tuesday", "Wednesday", "Thursday",
             "Friday", "Saturday", "Sunday"};
-    public MealManager(FoodDatabase foodDatabase, User user) throws SQLException {
+    public MealManager(FoodDatabase foodDatabase, User user, MealRepo mealRepo) throws SQLException {
         this.foodDatabase = foodDatabase;
         this.user = user;
+        this.mealRepo = mealRepo;
         this.discouragedItems = initializeDiscouragedItems(user);
         this.foodRecommender = new FoodRecommender(foodDatabase, user, discouragedItems);
-        this.meals = initializeWeeklyMeals();
-        this.mealRepo = new MealRepo();
+        this.meals = initializeWeeklyMeals(); // Then populate it
     }
 
     private Set<String> initializeDiscouragedItems(User user) throws SQLException {
@@ -36,22 +36,39 @@ public class MealManager {
         return discouraged;
     }
 
-    private Map<String, Meal> initializeWeeklyMeals() {
-        Map<String, Meal> mealMap = new LinkedHashMap<>();
-        String[] days = {"Monday", "Tuesday", "Wednesday", "Thursday",
-                "Friday", "Saturday", "Sunday"};
+    private Map<String, Meal> initializeWeeklyMeals() throws SQLException {
+        Map<String, Meal> mealMap = new LinkedHashMap<>(); // Ensure we always return a map
 
-        double mealCalories = user.getDailyCalorieRequirement() / 3;
-        double mealProtein = user.getProteinRequirement() / 3;
-        double mealCarbs = user.getCarbRequirement() / 3;
-        double mealFat = user.getFatRequirement() / 3;
+        try {
+            double mealCalories = user.getDailyCalorieRequirement() / 3;
+            double mealProtein = user.getProteinRequirement() / 3;
+            double mealCarbs = user.getCarbRequirement() / 3;
+            double mealFat = user.getFatRequirement() / 3;
 
-        for (String day : days) {
-            mealMap.put(day + "_Breakfast", new Meal(mealCalories, mealProtein, mealCarbs, mealFat));
-            mealMap.put(day + "_Lunch", new Meal(mealCalories, mealProtein, mealCarbs, mealFat));
-            mealMap.put(day + "_Dinner", new Meal(mealCalories, mealProtein, mealCarbs, mealFat));
+            for (String day : days) {
+                Meal breakfast = loadOrCreateMeal(day + "_Breakfast", mealCalories, mealProtein, mealCarbs, mealFat);
+                Meal lunch = loadOrCreateMeal(day + "_Lunch", mealCalories, mealProtein, mealCarbs, mealFat);
+                Meal dinner = loadOrCreateMeal(day + "_Dinner", mealCalories, mealProtein, mealCarbs, mealFat);
+
+                mealMap.put(day + "_Breakfast", breakfast);
+                mealMap.put(day + "_Lunch", lunch);
+                mealMap.put(day + "_Dinner", dinner);
+            }
+        } catch (Exception e) {
+            System.err.println("Error initializing meals: " + e.getMessage());
         }
+
         return mealMap;
+    }
+
+    private Meal loadOrCreateMeal(String mealKey, double defaultCalories, double defaultProtein, double defaultCarbs, double defaultFat) throws SQLException {
+        try {
+            Meal meal = getMeal(mealKey);
+            return meal != null ? meal : new Meal(defaultCalories, defaultProtein, defaultCarbs, defaultFat);
+        } catch (Exception e) {
+            System.err.println("Error loading meal: " + e.getMessage());
+            return new Meal(defaultCalories, defaultProtein, defaultCarbs, defaultFat);
+        }
     }
 
     public void manageMeal(String mealKey) throws SQLException {
@@ -98,8 +115,15 @@ public class MealManager {
     }
     public void deleteMeal(String mealKey) throws SQLException {
         Meal meal = meals.get(mealKey);
-        mealRepo.deleteMeal(meal.getMealId());
-        meal.clearMeal();
+        if (meal.getMealId() != 0) {
+            mealRepo.deleteMeal(meal.getMealId());
+        }
+        double mealCalories = user.getDailyCalorieRequirement() / 3;
+        double mealProtein = user.getProteinRequirement() / 3;
+        double mealCarbs = user.getCarbRequirement() / 3;
+        double mealFat = user.getFatRequirement() / 3;
+        Meal newMeal = new Meal(mealCalories, mealProtein, mealCarbs, mealFat);
+        meals.put(mealKey, newMeal);
     }
     private List<FoodItem> filterFoods(List<FoodItem> foods, Set<String> discouraged) {
         List<FoodItem> filtered = new ArrayList<>();
@@ -113,6 +137,7 @@ public class MealManager {
 
     public void showFoodRecommendations(Meal meal) throws SQLException {
         System.out.println("\n=== FOOD RECOMMENDATIONS ===");
+        System.out.println("If newly updated foods are not being shown login again\n");
         System.out.printf("Remaining: Protein %.1fg | Carbs %.1fg | Fat %.1fg\n",
                 meal.protein.getRemaining(),
                 meal.carbs.getRemaining(),
@@ -129,7 +154,7 @@ public class MealManager {
         }
     }
 
-    public void showWeeklySummary() {
+    public void showWeeklySummary() throws SQLException {
         System.out.println("\n=== WEEKLY SUMMARY ===");
         System.out.printf("%-10s %-10s %-10s %-10s %-10s\n",
                 "Day", "Calories", "Protein", "Carbs", "Fat");
@@ -148,21 +173,34 @@ public class MealManager {
     }
 
     public Meal getMeal(String mealKey) throws SQLException {
-        String[] parts = mealKey.split("_");
-        String dayOfWeek = parts[0];
-        String mealType = parts[1];
-
-        int mealId=mealRepo.getMealIdForDay(user.getUserID(), dayOfWeek, mealType);
-        Meal meal = mealRepo.getMeal(mealId,user.getDailyCalorieRequirement()/3,user.getProteinRequirement()/3,user.getFatRequirement()/3,user.getCarbRequirement()/3);
-        if (meal == null) {
-            return meals.get(mealKey);
+        if (meals == null || mealKey == null) {
+            return null;
         }
-        return meal;
 
-    }
+        try {
+            String[] parts = mealKey.split("_");
+            if (parts.length < 2) return null;
 
-    public Meal getMealFromMemory(String mealKey){
-        return meals.get(mealKey);
+            String dayOfWeek = parts[0];
+            String mealType = parts[1];
+
+            int mealId = mealRepo.getMealIdForDay(user.getUserID(), dayOfWeek, mealType);
+            if (mealId != -1) {
+                Meal meal = mealRepo.getMeal(mealId,
+                        user.getDailyCalorieRequirement()/3,
+                        user.getProteinRequirement()/3,
+                        user.getFatRequirement()/3,
+                        user.getCarbRequirement()/3);
+                if (meal != null) {
+                    meals.get(mealKey).setMealId(mealId);
+                    return meal;
+                }
+            }
+            return meals.get(mealKey);
+        } catch (Exception e) {
+            System.err.println("Error getting meal: " + e.getMessage());
+            return null;
+        }
     }
 
     public void showDiscouragedFoods() {
@@ -180,6 +218,9 @@ public class MealManager {
         return user;
     }
     public void saveMeal(String day,String meal,String mealKey) throws SQLException {
-        mealRepo.addMeal(user.getUserID(), day,meal,getMealFromMemory(mealKey));
+        mealRepo.addMeal(user.getUserID(), day,meal,meals.get(mealKey));
+    }
+    Map<String,Meal>getmeals(){
+        return new HashMap<>(meals);
     }
 }

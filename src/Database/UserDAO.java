@@ -136,9 +136,10 @@ public class UserDAO {
                 getHealthConditions(userId),
                 GoalFactory.create(rs.getString("goal"))
         );
-
-        user.setDiscouragedFoods(getDiscouragedFoods(userId));
         user.setUserID(rs.getInt("user_id"));
+        for(String food:getDiscouragedFoods(userId)) {
+            user.addDiscouragedFood(food);
+        }
         return user;
     }
 

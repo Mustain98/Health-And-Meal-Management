@@ -56,6 +56,6 @@ public class MainMenuService {
     }
 
     private void updateProfile() {
-//        new ProfileUpdateService(console, mealManager).show();
+        new ProfileUpdateService(console, mealManager.getUser()).show();
     }
 }
