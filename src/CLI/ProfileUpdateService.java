@@ -113,6 +113,7 @@ public class ProfileUpdateService {
 
     public void addFoodAllergy() {
         String food = consoleIO.getInput("Enter food you're allergic to");
+
         user.addDiscouragedFood(food);
         userdb.addFoodAllergy(user.getUserID(), food);
         consoleIO.printMessage("Food allergy added successfully!");

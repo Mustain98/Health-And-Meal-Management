@@ -7,13 +7,10 @@ import java.sql.SQLException;
 public class UserDatabase {
     private static UserDatabase instance;
     private Connection connection;
-
-    // Database configuration (move these to config file in production)
     private static final String DB_URL = "jdbc:mysql://localhost:3306/meal_planner";
     private static final String DB_USER = "root";
     private static final String DB_PASSWORD = "Delta-Charlie-1998";
 
-    // Private constructor to prevent instantiation
     private UserDatabase() {
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");

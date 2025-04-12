@@ -10,7 +10,7 @@ public class UserdbManager {
     }
 
     public void updateName(int userID, String newName) {
-        String query = "UPDATE users SET name = ? WHERE user_id = ?";
+        String query = "UPDATE users SET username = ? WHERE user_id = ?";
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
             stmt.setString(1, newName);
             stmt.setInt(2, userID);

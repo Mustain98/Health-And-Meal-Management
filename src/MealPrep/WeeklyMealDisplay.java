@@ -33,7 +33,7 @@ public class WeeklyMealDisplay {
                 case 1: showDayMenu(); break;
                 case 2: manageMealsMenu(); break;
                 case 3:deleteMealMenu(); break;
-                case 4: mealManager.showWeeklySummary(); break;
+                case 4: showWeeklySummary(); break;
                 case 0: return;
                 default: System.out.println("Invalid choice");
             }
@@ -44,7 +44,7 @@ public class WeeklyMealDisplay {
         String mealKey = getMealKeyFromMenu();
         if (mealKey == null) return;
 
-        Meal meal = mealManager.getMeal(mealKey);
+        Meal meal = mealManager.getmeals().get(mealKey);
         System.out.println("\nCurrent meal:");
         System.out.println(meal);
 
@@ -84,7 +84,7 @@ public class WeeklyMealDisplay {
         showMeal(day + "_Dinner");
     }
     private void showMeal(String mealKey) throws SQLException {
-        Meal meal = mealManager.getMeal(mealKey);
+        Meal meal = mealManager.getmeals().get(mealKey);
         System.out.println("\n" + mealKey.split("_")[1] + ":");
         System.out.println(meal);
     }
@@ -102,7 +102,23 @@ public class WeeklyMealDisplay {
             System.out.println("Meal saved!");
         }
     }
-
+    public void showWeeklySummary() throws SQLException {
+        System.out.println("\n=== WEEKLY SUMMARY ===");
+        System.out.printf("%-10s %-10s %-10s %-10s %-10s\n",
+                "Day", "Calories", "Protein", "Carbs", "Fat");
+        for (String day : days) {
+            double calories = 0, protein = 0, carbs = 0, fat = 0;
+            for (String mealType : new String[]{"Breakfast","Lunch","Dinner"}) {
+                Meal meal = mealManager.getmeals().get(day + "_" + mealType);
+                calories += meal.calories.getCurrent();
+                protein += meal.protein.getCurrent();
+                carbs += meal.carbs.getCurrent();
+                fat += meal.fat.getCurrent();
+            }
+            System.out.printf("%-10s %-10.1f %-10.1f %-10.1f %-10.1f\n",
+                    day, calories, protein, carbs, fat);
+        }
+    }
     private String getMealKeyFromMenu() {
         System.out.println("\nSelect Day to Manage:");
         for (int i = 0; i < days.length; i++) {

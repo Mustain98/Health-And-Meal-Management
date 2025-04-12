@@ -1,6 +1,6 @@
-package Database;
+package User;
 
-import User.*;
+import Database.UserDatabase;
 import HealthIssue.*;
 import Enum.*;
 import Factory.*;
@@ -10,7 +10,7 @@ import java.util.*;
 public class UserDAO {
     private final Connection connection;
 
-    public UserDAO() throws SQLException {
+    public UserDAO() {
         this.connection = UserDatabase.getInstance().getConnection();
     }
 

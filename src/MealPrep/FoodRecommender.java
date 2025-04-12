@@ -1,5 +1,6 @@
 // FoodRecommender.java (refactored)
 package MealPrep;
+import Food.FooddbManager;
 import User.*;
 import Database.FoodDatabase;
 import Food.FoodItem;
@@ -8,12 +9,12 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class FoodRecommender {
-    private final FoodDatabase foodDatabase;
+    private final FooddbManager fooddbManager;
     private final Set<String> discouragedItems;
     private final User user;
 
-    public FoodRecommender(FoodDatabase foodDatabase, User user, Set<String> discouragedItems) {
-        this.foodDatabase = foodDatabase;
+    public FoodRecommender(FooddbManager fooddbManager, User user, Set<String> discouragedItems) {
+        this.fooddbManager= fooddbManager;
         this.user = user;
         this.discouragedItems = discouragedItems;
     }
@@ -23,7 +24,6 @@ public class FoodRecommender {
         String[] categories = {"proteins", "carbs", "fats", "vegetables", "fruits", "nuts"};
         int maxRecommendations = 15;
         int offset = 10;
-        // Get remaining nutritional needs
         double remainingCalories = meal.calories.getRemaining()+80;
         double remainingProtein = meal.protein.getRemaining()+ offset;
         double remainingCarbs = meal.carbs.getRemaining()+ offset;
@@ -31,7 +31,7 @@ public class FoodRecommender {
 
 
         for (String category : categories) {
-            List<FoodItem> foods = foodDatabase.getFoodsByCategory(
+            List<FoodItem> foods = fooddbManager.getFoodsByCategory(
                     category,
                     remainingCalories,
                     remainingProtein,
