@@ -4,11 +4,14 @@ import User.*;
 import java.util.Set;
 
 public class HeartDisease extends HealthCondition {
-    Set<String> heartConditionDiscouraged = Set.of(
+   private static  Set<String> heartConditionDiscouraged = Set.of(
             "Duck", "Beef", "Goat Meat", "Prawns",
             "Ghee", "Coconut Oil", "Mustard Oil", "Coconut (Narkel)",
             "Muri (Puffed Rice)"
     );
+    public HeartDisease(){
+        super(heartConditionDiscouraged);
+    }
     @Override
     public void adjustNutritionalNeeds(User user) {
         user.setMacros(45, 25, 30);

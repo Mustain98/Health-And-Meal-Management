@@ -4,11 +4,22 @@ import User.*;
 import java.util.Set;
 
 public abstract class HealthCondition {
-    Set<String> discouragedFoods = Set.of();
+    protected Set<String> discouragedFoods;
+
+    public HealthCondition(Set<String> discouragedFoods) {
+        this.discouragedFoods = discouragedFoods;
+    }
+
     public abstract void adjustNutritionalNeeds(User user);
-    public abstract void addDiscouragedFood(User user);
-    public  void removeDiscouragedFood(User user){
-        for(String food: discouragedFoods){
+
+    public void addDiscouragedFood(User user) {
+        for (String food : discouragedFoods) {
+            user.addDiscouragedFood(food);
+        }
+    }
+
+    public void removeDiscouragedFood(User user) {
+        for (String food : discouragedFoods) {
             user.removeDiscouragedFood(food);
         }
     }

@@ -65,7 +65,7 @@ public class UserdbManager {
     }
 
     public void removeHealthCondition(int userID, String condition) {
-        String query = "DELETE FROM user_health_conditions WHERE user_id = ? AND condition = ?";
+        String query = "DELETE FROM user_health_conditions WHERE user_id = ? AND condition_name = ?";
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
             stmt.setInt(1, userID);
             stmt.setString(2, condition);

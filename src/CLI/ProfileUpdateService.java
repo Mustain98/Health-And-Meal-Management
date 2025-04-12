@@ -102,13 +102,15 @@ public class ProfileUpdateService {
 
     public void removeHealthCondition() {
         HealthCondition healthCondition= consoleIO.getHealthCondition();
-        if (user.getHealthConditions().contains(healthCondition)) {
-            user.removeHealthCondition(healthCondition);
-            userdb.removeHealthCondition(user.getUserID(), healthCondition.getClass().getSimpleName());
-            consoleIO.printMessage("Health condition removed successfully!");
-        } else {
-            consoleIO.printMessage("This health condition doesn't exist for the user.");
+        for(HealthCondition hc: user.getHealthConditions()) {
+            if(hc.getClass().getSimpleName().equals(healthCondition.getClass().getSimpleName())) {
+                user.removeHealthCondition(hc);
+                userdb.removeHealthCondition(user.getUserID(), healthCondition.getClass().getSimpleName());
+                consoleIO.printMessage("Health condition removed successfully!");
+                return;
+            }
         }
+        consoleIO.printMessage("This health condition doesn't exist for the user.");
     }
 
     public void addFoodAllergy() {

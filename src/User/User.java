@@ -61,6 +61,11 @@ public class User {
                 : 10 * weight + 6.25 * height - 5 * age - 161;
 
         this.dailyCalorieRequirement = activityLevel.calculateTDEE(bmr);
+        this.carbRequirement=0;
+        this.proteinRequirement=0;
+        this.fatRequirement=0;
+        this.weeklySaltIntake=0;
+        this.weeklySugarIntake=0;
         for(HealthCondition healthCondition : healthConditions) {
             healthCondition.adjustNutritionalNeeds(this);
         }
@@ -69,10 +74,30 @@ public class User {
     }
 
     public void setMacros(double carbPercent, double proteinPercent, double fatPercent) {
-        this.carbRequirement = (dailyCalorieRequirement * (carbPercent / 100)) / 4;
-        this.proteinRequirement = (dailyCalorieRequirement * (proteinPercent / 100)) / 4;
-        this.fatRequirement = (dailyCalorieRequirement * (fatPercent / 100)) / 9;
+        double newCarbGrams = (dailyCalorieRequirement * carbPercent) / 400;
+        double newProteinGrams = (dailyCalorieRequirement * proteinPercent) / 400;
+        double newFatGrams = (dailyCalorieRequirement * fatPercent) / 900;
+
+        if (this.carbRequirement > 0) {
+            this.carbRequirement = (this.carbRequirement + newCarbGrams) / 2;
+        } else {
+            this.carbRequirement = newCarbGrams;
+        }
+
+        if (this.proteinRequirement > 0) {
+            this.proteinRequirement = (this.proteinRequirement + newProteinGrams) / 2;
+        } else {
+            this.proteinRequirement = newProteinGrams;
+        }
+
+        if (this.fatRequirement > 0) {
+            this.fatRequirement = (this.fatRequirement + newFatGrams) / 2;
+        } else {
+            this.fatRequirement = newFatGrams;
+        }
+
     }
+
 
     public void setSaltAndSugar(double salt, double sugar) {
         this.weeklySaltIntake = salt;
@@ -103,12 +128,6 @@ public class User {
     public Set<String>getDiscouragedFoods() {
         return discouragedFoods;
     }
-    public void setDiscouragedFoods(Set<String> discouragedFoods) {
-        this.discouragedFoods.clear();
-        if (discouragedFoods != null) {
-            this.discouragedFoods.addAll(discouragedFoods);
-        }
-    }
     public void setWeight(double weight) {
         this.weight = weight;
         calculateDailyRequirements();
@@ -119,15 +138,17 @@ public class User {
         calculateDailyRequirements();
     }
     public List<HealthCondition> getHealthConditions() {
-        return new ArrayList<>(healthConditions);
+        return healthConditions;
     }
     public void addHealthCondition(HealthCondition healthCondition) {
         this.healthConditions.add(healthCondition);
         healthCondition.addDiscouragedFood(this);
+        healthCondition.adjustNutritionalNeeds(this);
     }
     public void removeHealthCondition(HealthCondition healthCondition) {
         this.healthConditions.remove(healthCondition);
         healthCondition.removeDiscouragedFood(this);
+        calculateDailyRequirements();
     }
     public String getName(){
         return this.name;
