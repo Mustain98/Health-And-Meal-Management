@@ -1,7 +1,8 @@
 // WeeklyMealDisplay.java
-package MealPrep;
+package CLI;
 
-import CLI.ConsoleIO;
+import MealPrep.Meal;
+import MealPrep.MealManager;
 
 import java.sql.SQLException;
 import java.util.Scanner;

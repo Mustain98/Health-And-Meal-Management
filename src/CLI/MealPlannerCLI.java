@@ -1,6 +1,5 @@
 package CLI;
 
-import Database.*;
 import Food.FooddbManager;
 import MealPrep.*;
 import User.*;

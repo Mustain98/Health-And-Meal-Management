@@ -183,7 +183,7 @@ public class MealManager {
     public void saveMeal(String day,String meal,String mealKey) throws SQLException {
         mealRepo.addMeal(user.getUserID(), day,meal,meals.get(mealKey));
     }
-    Map<String,Meal>getmeals(){
+    public Map<String,Meal>getmeals(){
         return new HashMap<>(meals);
     }
 }

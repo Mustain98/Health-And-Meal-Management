@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Diagram>
+  <ID>JAVA</ID>
+  <OriginalElement>C:/Users/LENOVO/Documents/ooc 2/Health And Meal Manager/src</OriginalElement>
+  <nodes>
+    <node x="1351.5" y="2850.5">CLI.MainMenuService</node>
+    <node x="-73.0" y="3455.5">Goal.LoseFat</node>
+    <node x="373.0" y="-610.0">Database.FoodDatabase</node>
+    <node x="1187.0" y="1875.5">Goal.Goal</node>
+    <node x="-133.0" y="1015.5">Activity.ModerateActivity</node>
+    <node x="1241.0" y="-170.5">MealPrep.MealManager</node>
+    <node x="1034.0" y="2834.5">Database.UserDatabase</node>
+    <node x="1030.0" y="370.5">User.UserdbManager</node>
+    <node x="-127.5" y="4120.5">HealthIssue.HeartDisease</node>
+    <node x="52.5" y="4400.5">HealthIssue.Diabetes</node>
+    <node x="232.5" y="4120.5">HealthIssue.UnderWeight</node>
+    <node x="705.5" y="1649.5">MealPrep.Meal</node>
+    <node x="412.5" y="4400.5">HealthIssue.KidneyDisease</node>
+    <node x="461.5" y="2594.5">MealPrep.NutritionalRequirement</node>
+    <node x="921.5" y="3440.5">MealPrep.FoodRecommender</node>
+    <node x="122.5" y="-379.5">Factory.HealthConditionFactory</node>
+    <node x="141.5" y="1319.5">User.User</node>
+    <node x="608.0" y="3440.5">CLI.MealPlannerCLI</node>
+    <node x="1550.5" y="4415.5">Factory.GoalFactory</node>
+    <node x="59.0" y="1155.5">Factory.ActivityLevelFactory</node>
+    <node x="-316.0" y="2565.0">CLI.ConsoleIO</node>
+    <node x="526.0" y="-49.5">Food.FooddbManager</node>
+    <node x="249.0" y="340.5">User.UserDAO</node>
+    <node x="747.0" y="3755.5">Goal.MaintainWeight</node>
+    <node x="1427.0" y="3755.5">Goal.GainMuscle</node>
+    <node x="-316.5" y="1155.5">CLI.UserProfileService</node>
+    <node x="31.5" y="-124.5">CLI.ProfileUpdateService</node>
+    <node x="-25.5" y="-579.5">Enum.Gender</node>
+    <node x="1607.0" y="3455.5">Goal.GainWeight</node>
+    <node x="-319.0" y="294.5">Food.FoodItem</node>
+    <node x="-133.0" y="815.5">Activity.ActivityLevel</node>
+    <node x="-317.0" y="3725.5">HealthIssue.HealthCondition</node>
+    <node x="592.5" y="4120.5">HealthIssue.Hypertension</node>
+    <node x="227.0" y="1015.5">Activity.HighActivity</node>
+    <node x="407.0" y="1155.5">Activity.LowActivity</node>
+    <node x="107.0" y="3605.5">MealPrep.MealRepo</node>
+    <node x="-328.5" y="-394.5">CLI.AuthenticationService</node>
+    <node x="949.0" y="4280.0">MealPrep.WeeklyMealDisplay</node>
+    <node x="1312.5" y="4120.5">HealthIssue.NoHealthIssues</node>
+    <node x="-307.5" y="4400.5">HealthIssue.Obesity</node>
+  </nodes>
+  <notes />
+  <edges>
+    <edge source="HealthIssue.NoHealthIssues" target="HealthIssue.HealthCondition" relationship="GENERALIZATION">
+      <point x="0.0" y="-68.5" />
+      <point x="1475.0" y="4067.0" />
+      <point x="-145.0" y="4067.0" />
+      <point x="0.0" y="83.5" />
+    </edge>
+    <edge source="Activity.HighActivity" target="Activity.ActivityLevel" relationship="GENERALIZATION">
+      <point x="-148.0" y="0.0" />
+      <point x="195.0" y="1069.0" />
+      <point x="195.0" y="869.0" />
+      <point x="148.0" y="0.0" />
+    </edge>
+    <edge source="Goal.GainWeight" target="Goal.Goal" relationship="GENERALIZATION">
+      <point x="0.0" y="-53.5" />
+      <point x="1755.0" y="3387.0" />
+      <point x="1334.0" y="3387.0" />
+      <point x="-1.0" y="53.5" />
+    </edge>
+    <edge source="Activity.ModerateActivity" target="Activity.ActivityLevel" relationship="GENERALIZATION">
+      <point x="148.0" y="0.0" />
+      <point x="195.0" y="1069.0" />
+      <point x="195.0" y="869.0" />
+      <point x="148.0" y="0.0" />
+    </edge>
+    <edge source="Goal.GainMuscle" target="Goal.Goal" relationship="GENERALIZATION">
+      <point x="0.0" y="-53.5" />
+      <point x="1575.0" y="3667.0" />
+      <point x="590.5" y="3667.0" />
+      <point x="590.5" y="3387.0" />
+      <point x="1334.0" y="3387.0" />
+      <point x="-1.0" y="53.5" />
+    </edge>
+    <edge source="Goal.LoseFat" target="Goal.Goal" relationship="GENERALIZATION">
+      <point x="0.0" y="-53.5" />
+      <point x="75.0" y="3387.0" />
+      <point x="1334.0" y="3387.0" />
+      <point x="-1.0" y="53.5" />
+    </edge>
+    <edge source="HealthIssue.Hypertension" target="HealthIssue.HealthCondition" relationship="GENERALIZATION">
+      <point x="0.0" y="-68.5" />
+      <point x="755.0" y="4067.0" />
+      <point x="-145.0" y="4067.0" />
+      <point x="0.0" y="83.5" />
+    </edge>
+    <edge source="HealthIssue.Diabetes" target="HealthIssue.HealthCondition" relationship="GENERALIZATION">
+      <point x="0.0" y="-68.5" />
+      <point x="215.0" y="4329.0" />
+      <point x="-160.0" y="4329.0" />
+      <point x="-160.0" y="4067.0" />
+      <point x="-145.0" y="4067.0" />
+      <point x="0.0" y="83.5" />
+    </edge>
+    <edge source="Goal.MaintainWeight" target="Goal.Goal" relationship="GENERALIZATION">
+      <point x="0.0" y="-53.5" />
+      <point x="895.0" y="3667.0" />
+      <point x="590.5" y="3667.0" />
+      <point x="590.5" y="3387.0" />
+      <point x="1334.0" y="3387.0" />
+      <point x="-1.0" y="53.5" />
+    </edge>
+    <edge source="Activity.LowActivity" target="Activity.ActivityLevel" relationship="GENERALIZATION">
+      <point x="0.0" y="-53.5" />
+      <point x="555.0" y="960.0" />
+      <point x="195.0" y="960.0" />
+      <point x="195.0" y="869.0" />
+      <point x="148.0" y="0.0" />
+    </edge>
+    <edge source="HealthIssue.HeartDisease" target="HealthIssue.HealthCondition" relationship="GENERALIZATION">
+      <point x="0.0" y="-68.5" />
+      <point x="35.0" y="4067.0" />
+      <point x="-145.0" y="4067.0" />
+      <point x="0.0" y="83.5" />
+    </edge>
+    <edge source="HealthIssue.Obesity" target="HealthIssue.HealthCondition" relationship="GENERALIZATION">
+      <point x="0.0" y="-68.5" />
+      <point x="-145.0" y="4329.0" />
+      <point x="-160.0" y="4329.0" />
+      <point x="-160.0" y="4067.0" />
+      <point x="-145.0" y="4067.0" />
+      <point x="0.0" y="83.5" />
+    </edge>
+    <edge source="HealthIssue.KidneyDisease" target="HealthIssue.HealthCondition" relationship="GENERALIZATION">
+      <point x="0.0" y="-68.5" />
+      <point x="575.0" y="4329.0" />
+      <point x="-160.0" y="4329.0" />
+      <point x="-160.0" y="4067.0" />
+      <point x="-145.0" y="4067.0" />
+      <point x="0.0" y="83.5" />
+    </edge>
+    <edge source="HealthIssue.UnderWeight" target="HealthIssue.HealthCondition" relationship="GENERALIZATION">
+      <point x="0.0" y="-68.5" />
+      <point x="395.0" y="4067.0" />
+      <point x="-145.0" y="4067.0" />
+      <point x="0.0" y="83.5" />
+    </edge>
+  </edges>
+  <settings layout="Hierarchic Compact" zoom="0.12159606656580937" showDependencies="false" x="805.0" y="2033.9999999999995" />
+  <SelectedNodes />
+  <Categories>
+    <Category>Constructors</Category>
+    <Category>Fields</Category>
+    <Category>Inner Classes</Category>
+    <Category>Methods</Category>
+    <Category>Properties</Category>
+  </Categories>
+  <SCOPE>All</SCOPE>
+  <VISIBILITY>private</VISIBILITY>
+</Diagram>
+
