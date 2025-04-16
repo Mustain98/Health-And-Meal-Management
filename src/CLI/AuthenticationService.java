@@ -57,7 +57,6 @@ public class AuthenticationService {
 
         System.out.println(newUser);
         String password = console.getPasswordWithConfirmation();
-        String Password = password;
 
         try {
             int userId = userDAO.createUser(newUser, password);

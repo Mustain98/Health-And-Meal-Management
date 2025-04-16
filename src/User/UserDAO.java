@@ -29,10 +29,6 @@ public class UserDAO {
                 insertHealthConditions(userId, user.getHealthConditions());
             }
 
-            if (!user.getDiscouragedFoods().isEmpty()) {
-                insertDiscouragedFoods(userId, user.getDiscouragedFoods());
-            }
-
             connection.commit();
             return userId;
         } catch (SQLException e) {
@@ -87,19 +83,6 @@ public class UserDAO {
                     stmt.setString(2, condition.getClass().getSimpleName());
                     stmt.addBatch();
                 }
-            }
-            stmt.executeBatch();
-        }
-    }
-
-    private void insertDiscouragedFoods(int userId, Set<String> foods) throws SQLException {
-        String sql = "INSERT INTO user_discouraged_foods (user_id, food_name) VALUES (?, ?)";
-
-        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-            for (String food : foods) {
-                stmt.setInt(1, userId);
-                stmt.setString(2, food);
-                stmt.addBatch();
             }
             stmt.executeBatch();
         }
