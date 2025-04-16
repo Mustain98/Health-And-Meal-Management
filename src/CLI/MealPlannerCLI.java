@@ -1,18 +1,18 @@
 package CLI;
 
-import Database.*;
+import Food.FooddbManager;
 import MealPrep.*;
 import User.*;
 import java.sql.SQLException;
 
 public class MealPlannerCLI {
     private final ConsoleIO console;
-    private final FoodDatabase foodDatabase;
+    private final FooddbManager fooddbManager;
     private final UserDAO userDAO;
 
     public MealPlannerCLI() throws SQLException {
         this.console = new ConsoleIO();
-        this.foodDatabase = new FoodDatabase();
+        this.fooddbManager = new FooddbManager();
         this.userDAO = new UserDAO();
     }
 
@@ -20,8 +20,8 @@ public class MealPlannerCLI {
         try {
             User user = new AuthenticationService(userDAO, console).authenticate();
             if (user == null) return;
-
-            MealManager mealManager = new MealManager(foodDatabase, user);
+            MealRepo mealRepo=new MealRepo(fooddbManager);
+            MealManager mealManager = new MealManager(fooddbManager, user,mealRepo);
             WeeklyMealDisplay weeklyDisplay = new WeeklyMealDisplay(mealManager);
             new MainMenuService(console, mealManager, weeklyDisplay).show();
 

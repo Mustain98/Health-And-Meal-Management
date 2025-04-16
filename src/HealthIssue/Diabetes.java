@@ -4,12 +4,15 @@ import User.*;
 import java.util.Set;
 
 public class Diabetes extends HealthCondition {
-    Set<String> diabetesDiscouraged = Set.of(
+    private static Set<String> diabetesDiscouraged = Set.of(
             "Basmati Rice", "Luchi Flour", "Muri (Puffed Rice)",
             "Chira (Flattened Rice)", "Suji (Semolina)", "Mango (Aam)",
             "Litchi (Lichu)", "Banana (Kola)", "Jackfruit (Kathal)",
             "Wood Apple (Kathbel)", "Betel Nut (Supari)"
     );
+    public Diabetes(){
+        super(diabetesDiscouraged);
+    }
     @Override
     public void adjustNutritionalNeeds(User user) {
         user.setMacros(35, 30, 35);

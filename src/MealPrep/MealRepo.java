@@ -1,19 +1,29 @@
-package Database;
+package MealPrep;
 
-import MealPrep.*;
+import Database.FoodDatabase;
+import Database.UserDatabase;
 import Food.FoodItem;
+import Food.FooddbManager;
+
 import java.sql.*;
 import java.util.HashMap;
 import java.util.Map;
 
 public class MealRepo {
     private final Connection connection;
-
-    public MealRepo() throws SQLException {
+    private FooddbManager fooddbManager;
+    public MealRepo(FooddbManager fooddbManager) {
         this.connection = UserDatabase.getInstance().getConnection();
+        this.fooddbManager = fooddbManager;
     }
 
     public int addMeal(int userId, String dayOfWeek, String mealType, Meal meal) throws SQLException {
+        if (mealExists(userId, dayOfWeek, mealType)) {
+            int existingId = getMealIdForDay(userId, dayOfWeek, mealType);
+            meal.setMealId(existingId);
+            return existingId;
+        }
+
         connection.setAutoCommit(false);
         try {
             int mealId = insertMealHeader(userId, dayOfWeek, mealType, meal);
@@ -81,18 +91,18 @@ public class MealRepo {
     }
 
     public void deleteMeal(int mealId) throws SQLException {
+        if (mealId <= 0) {
+            throw new SQLException("Invalid meal ID");
+        }
+
         connection.setAutoCommit(false);
         try {
-            // First delete all meal items
             deleteMealItems(mealId);
-
-            // Then delete the meal header
             deleteMealHeader(mealId);
-
             connection.commit();
         } catch (SQLException e) {
             connection.rollback();
-            throw e;
+            throw new SQLException("Failed to delete meal: " + e.getMessage());
         } finally {
             connection.setAutoCommit(true);
         }
@@ -132,12 +142,10 @@ public class MealRepo {
     }
 
 
-    public Meal getMeal(int mealId,Double calReq,Double ProReq,Double fatReq,Double carbReq) throws SQLException {
+    public Meal getMeal(int mealId,Double calReq,Double ProReq,Double carbReq,Double fatReq) throws SQLException {
         // First get the meal header
-        Meal meal = new Meal(calReq,ProReq,fatReq,carbReq);
-        if (meal == null) {
-            return null;
-        }
+        Meal meal = new Meal(calReq,ProReq,carbReq,fatReq);
+        meal.setMealId(mealId);
 
         Map<FoodItem, Double> foodItems = getMealItems(mealId);
         for (Map.Entry<FoodItem, Double> entry : foodItems.entrySet()) {
@@ -157,7 +165,7 @@ public class MealRepo {
                 while (rs.next()) {
                     String foodName = rs.getString("food_name");
                     double amount = rs.getDouble("amount");
-                    FoodItem food = FoodDatabase.getFoodByName(foodName);
+                    FoodItem food = fooddbManager.getFoodByName(foodName);
                     if (food != null) {
                         items.put(food, amount);
                     }
@@ -165,6 +173,23 @@ public class MealRepo {
             }
         }
         return items;
+    }
+
+    public boolean mealExists(int userId, String dayOfWeek, String mealType) throws SQLException {
+        String sql = "SELECT COUNT(*) FROM meals WHERE user_id = ? AND day_of_week = ? AND meal_type = ?";
+
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setInt(1, userId);
+            stmt.setString(2, dayOfWeek);
+            stmt.setString(3, mealType);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1) > 0;
+                }
+            }
+        }
+        return false;
     }
 
     public void close() {

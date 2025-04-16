@@ -1,5 +1,12 @@
 package CLI;
 
+import Activity.ActivityLevel;
+import Factory.ActivityLevelFactory;
+import Factory.GoalFactory;
+import Factory.HealthConditionFactory;
+import Goal.Goal;
+import HealthIssue.HealthCondition;
+
 import java.util.Scanner;
 import java.util.List;
 import java.util.Arrays;
@@ -100,6 +107,18 @@ public class ConsoleIO {
         return scanner.nextLine().trim();
     }
 
+    public Goal getGoal() {
+        String input = getInput("Enter Goal (LoseFat/Maintain/GAINWEIGHT/GainMuscle)");
+        return GoalFactory.create(input);
+    }
+    public HealthCondition getHealthCondition() {
+        String input = getInput("Enter Health Condition(DIABETES/HEART_DISEASE/HYPERTENSION/OBESITY/NONE)");
+        return HealthConditionFactory.createSingle(input);
+    }
+    public ActivityLevel getActivityLevel() {
+        String input = getInput("Enter ActivityLevel(Low/Moderate/High)");
+        return ActivityLevelFactory.create(input);
+    }
     public String getPassword(String prompt) {
         // Note: In real application, use Console.readPassword() for hidden input
         System.out.print(prompt + ": ");

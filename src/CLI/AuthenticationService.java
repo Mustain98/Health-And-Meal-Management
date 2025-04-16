@@ -1,6 +1,6 @@
 package CLI;
 
-import Database.UserDAO;
+import User.UserDAO;
 import User.User;
 import java.sql.SQLException;
 

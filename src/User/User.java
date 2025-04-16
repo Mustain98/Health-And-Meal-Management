@@ -41,13 +41,14 @@ public class User {
         this.healthConditions = healthConditions;
         this.goal = goal;
         calculateDailyRequirements();
+        this.discouragedFoods=new HashSet<>();
         for(HealthCondition healthCondition : healthConditions) {
             healthCondition.addDiscouragedFood(this);
         }
     }
 
-    public void addDiscouragedFood(List<String> foodItems) {
-        this.discouragedFoods.addAll(foodItems);
+    public void addDiscouragedFood(String foodItem) {
+        this.discouragedFoods.add(foodItem);
     }
 
     private void calculateWaterRequirement() {
@@ -60,6 +61,11 @@ public class User {
                 : 10 * weight + 6.25 * height - 5 * age - 161;
 
         this.dailyCalorieRequirement = activityLevel.calculateTDEE(bmr);
+        this.carbRequirement=0;
+        this.proteinRequirement=0;
+        this.fatRequirement=0;
+        this.weeklySaltIntake=0;
+        this.weeklySugarIntake=0;
         for(HealthCondition healthCondition : healthConditions) {
             healthCondition.adjustNutritionalNeeds(this);
         }
@@ -68,10 +74,30 @@ public class User {
     }
 
     public void setMacros(double carbPercent, double proteinPercent, double fatPercent) {
-        this.carbRequirement = (dailyCalorieRequirement * (carbPercent / 100)) / 4;
-        this.proteinRequirement = (dailyCalorieRequirement * (proteinPercent / 100)) / 4;
-        this.fatRequirement = (dailyCalorieRequirement * (fatPercent / 100)) / 9;
+        double newCarbGrams = (dailyCalorieRequirement * carbPercent) / 400;
+        double newProteinGrams = (dailyCalorieRequirement * proteinPercent) / 400;
+        double newFatGrams = (dailyCalorieRequirement * fatPercent) / 900;
+
+        if (this.carbRequirement > 0) {
+            this.carbRequirement = (this.carbRequirement + newCarbGrams) / 2;
+        } else {
+            this.carbRequirement = newCarbGrams;
+        }
+
+        if (this.proteinRequirement > 0) {
+            this.proteinRequirement = (this.proteinRequirement + newProteinGrams) / 2;
+        } else {
+            this.proteinRequirement = newProteinGrams;
+        }
+
+        if (this.fatRequirement > 0) {
+            this.fatRequirement = (this.fatRequirement + newFatGrams) / 2;
+        } else {
+            this.fatRequirement = newFatGrams;
+        }
+
     }
+
 
     public void setSaltAndSugar(double salt, double sugar) {
         this.weeklySaltIntake = salt;
@@ -100,27 +126,29 @@ public class User {
         return this.fatRequirement;
     }
     public Set<String>getDiscouragedFoods() {
-        return this.discouragedFoods;
-    }
-    public void setDiscouragedFoods(Set<String> discouragedFoods) {
-        if (discouragedFoods == null) {
-            this.discouragedFoods = new HashSet<>();
-        } else {
-            this.discouragedFoods = new HashSet<>(discouragedFoods);
-        }
+        return discouragedFoods;
     }
     public void setWeight(double weight) {
         this.weight = weight;
         calculateDailyRequirements();
+        calculateWaterRequirement();
     }
     public void setactivity(ActivityLevel activity) {
         this.activityLevel=activity;
+        calculateDailyRequirements();
     }
     public List<HealthCondition> getHealthConditions() {
-        return new ArrayList<>(healthConditions);
+        return healthConditions;
     }
-    public void setHealthConditions(List<HealthCondition> healthConditions) {
-        this.healthConditions = healthConditions;
+    public void addHealthCondition(HealthCondition healthCondition) {
+        this.healthConditions.add(healthCondition);
+        healthCondition.addDiscouragedFood(this);
+        healthCondition.adjustNutritionalNeeds(this);
+    }
+    public void removeHealthCondition(HealthCondition healthCondition) {
+        this.healthConditions.remove(healthCondition);
+        healthCondition.removeDiscouragedFood(this);
+        calculateDailyRequirements();
     }
     public String getName(){
         return this.name;
@@ -188,5 +216,16 @@ public class User {
     }
     public int getUserID() {
         return userID;
+    }
+
+    public void setName(String newName) {
+        this.name=newName;
+    }
+
+    public void setAge(int newAge) {
+        this.age=newAge;
+    }
+    public void removeDiscouragedFood(String food){
+        this.discouragedFoods.remove(food);
     }
 }

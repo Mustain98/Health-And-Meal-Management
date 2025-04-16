@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Meal {
-    private int mealId;
+    public int mealId=0;
     private  Map<FoodItem, Double> foodItems;
     public final NutritionalRequirement calories;
     public final NutritionalRequirement protein;
